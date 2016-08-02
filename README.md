@@ -21,6 +21,9 @@ The `accessKey` and the `secretKey` can be generated in the OTC console under _M
 
 The versioning is bound to the one of the AWS Java SDK from Amazon. But as it only consists of two classes and is currently not deployed to maven central, you could also simply copy both files into your project. I don't expect them to be changed much unless the interface of either the OBS service or the AWS client change.
 
+## Contact
+If you have any questions, please feel free to contact me at hannes.korte@implisense.com.
+
 ## License
 This software is licensed under the MIT License:
 <pre>
