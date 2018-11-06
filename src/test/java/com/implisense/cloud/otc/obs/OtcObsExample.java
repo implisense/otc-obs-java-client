@@ -15,7 +15,7 @@ public class OtcObsExample {
         String secretKey = "........................................";
         AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
 
-        AmazonS3 obs = OtcObsClient.create(credentials);
+        AmazonS3 obs = OtcObsClientFactory.create(credentials);
 
         /*
          * This example shows a simple workflow using the object storage
