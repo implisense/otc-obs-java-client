@@ -4,11 +4,11 @@ import com.amazonaws.ClientConfiguration;
 import com.amazonaws.Protocol;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.SignerFactory;
-import com.amazonaws.internal.StaticCredentialsProvider;
-import com.amazonaws.regions.InMemoryRegionImpl;
-import com.amazonaws.regions.Region;
-import com.amazonaws.services.s3.AmazonS3Client;
+import com.amazonaws.client.builder.AwsClientBuilder;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 
 /**
  * This class should be instantiated using the factory method as the special signer
@@ -23,17 +23,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
  *
  * @author Hannes Korte (hannes.korte@implisense.com)
  */
-public class OtcObsClient extends AmazonS3Client {
-
-    public OtcObsClient(AWSCredentials credentials, ClientConfiguration clientConfiguration) {
-        this(new StaticCredentialsProvider(credentials), clientConfiguration);
-    }
-
-    public OtcObsClient(AWSCredentialsProvider credentialsProvider, ClientConfiguration clientConfiguration) {
-        super(credentialsProvider, clientConfiguration);
-        this.setSignerRegionOverride("eu-de");
-        this.setRegion(new Region(new InMemoryRegionImpl("eu-de", "otc.t-systems.com")));
-    }
+public class OtcObsClientFactory {
 
     /**
      * If this factory is used to create the instance, there is no need to register the special signer manually.
@@ -41,20 +31,18 @@ public class OtcObsClient extends AmazonS3Client {
      * @param credentials
      * @return A new instance of this class
      */
-    public static OtcObsClient create(AWSCredentials credentials) {
-        return create(new StaticCredentialsProvider(credentials));
+    public static AmazonS3 create(AWSCredentials credentials) {
+        return create(new AWSStaticCredentialsProvider(credentials));
     }
 
     /**
      * If this factory is used to create the instance, there is no need to register the special signer manually.
      * The default configuration uses the HTTPS protocol.
      * @param credentialsProvider
-     * @return A new instance of this class
+     * @return A new instance of a configured AmazonS3Client
      */
-    public static OtcObsClient create(AWSCredentialsProvider credentialsProvider) {
-        ClientConfiguration clientConfiguration = new ClientConfiguration();
-        clientConfiguration.setProtocol(Protocol.HTTPS);
-        return create(credentialsProvider, clientConfiguration);
+    public static AmazonS3 create(AWSCredentialsProvider credentialsProvider) {
+        return create(credentialsProvider, new ClientConfiguration());
     }
 
     /**
@@ -63,8 +51,8 @@ public class OtcObsClient extends AmazonS3Client {
      * @param clientConfiguration
      * @return A new instance of this class
      */
-    public static OtcObsClient create(AWSCredentials credentials, ClientConfiguration clientConfiguration) {
-        return create(new StaticCredentialsProvider(credentials), clientConfiguration);
+    public static AmazonS3 create(AWSCredentials credentials, ClientConfiguration clientConfiguration) {
+        return create(new AWSStaticCredentialsProvider(credentials), clientConfiguration);
     }
 
     /**
@@ -73,14 +61,18 @@ public class OtcObsClient extends AmazonS3Client {
      * @param clientConfiguration
      * @return A new instance of this class
      */
-    public static OtcObsClient create(AWSCredentialsProvider credentialsProvider, ClientConfiguration clientConfiguration) {
+    public static AmazonS3 create(AWSCredentialsProvider credentialsProvider, ClientConfiguration clientConfiguration) {
         SignerFactory.registerSigner("OtcObsSigner", OtcObsSigner.class);
         clientConfiguration.setSignerOverride("OtcObsSigner");
-        return new OtcObsClient(credentialsProvider, clientConfiguration);
+
+        clientConfiguration.setProtocol(Protocol.HTTPS);
+
+        AmazonS3ClientBuilder clientBuilder = AmazonS3ClientBuilder.standard()
+                .withCredentials(credentialsProvider)
+                .withClientConfiguration(clientConfiguration)
+                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration("obs.otc.t-systems.com", "eu-de"));
+
+        return clientBuilder.build();
     }
 
-    @Override
-    protected String getServiceNameIntern() {
-        return "obs";
-    }
 }
