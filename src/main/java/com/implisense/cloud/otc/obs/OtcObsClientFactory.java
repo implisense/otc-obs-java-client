@@ -18,7 +18,7 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
  * String secretKey = "........................................";
  * AWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
  *
- * AmazonS3 obs = OtcObsClient.create(credentials);
+ * AmazonS3 obs = OtcObsClientFactory.create(credentials);
  * </pre></code>
  *
  * @author Hannes Korte (hannes.korte@implisense.com)
