@@ -7,7 +7,7 @@
 
     <artifactId>otc-obs-java-client</artifactId>
     <groupId>com.implisense.cloud</groupId>
-    <version>1.11.160</version>
+    <version>1.11.448</version>
     <name>OTC OBS Java Client</name>
     <description>This is a java client for the Object Storage of the Open Telekom Cloud. It is just a minimal wrapper of the AWS java client for S3</description>
     <url>https://github.com/implisense/otc-obs-java-client</url>
